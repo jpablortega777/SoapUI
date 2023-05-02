@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="09a95c58-43c9-4337-829b-2839f8816deb" activeEnvironment="Default" name="REST Project 1" resourceRoot="" soapui-version="5.7.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="8f708a12-a6e2-4260-a210-bde6eb6680c8" wadlVersion="http://wadl.dev.java.net/2009/02" name="https://petstore.swagger.io" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>https://petstore.swagger.io</con:endpoint></con:endpoints><con:resource name="Pet" path="/v2/pet" id="cd956e3f-b39b-4765-9033-ba998c4abbb1"><con:settings/><con:parameters/><con:method name="Pet 1" id="f444259f-eb3d-4282-b208-9dd8c95589cf" method="POST"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>400</con:status><con:params/><con:element xmlns:pet="https://petstore.swagger.io/v2/pet">pet:Fault</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/><con:element>Pet</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:pet="https://petstore.swagger.io/v2/pet">pet:Response</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/xml</con:mediaType><con:params/><con:element>Pet</con:element></con:representation><con:request name="Request 1" id="5a45df9d-fc69-4240-a321-281c27cf3e13" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://petstore.swagger.io</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:testSuite id="273cbb19-f316-4004-986d-ac6fa13e1953" name="Test 1"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="3ba0f769-d3d5-4397-acef-99f08dd9a16d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase 1" searchProperties="true"><con:settings/><con:testStep type="groovy" name="Var_Iniciales" id="5024399d-775c-484c-9758-299a07a2b667"><con:settings/><con:config><script>import com.eviware.soapui.support.XmlHolder
+import jxl.*
+import jxl.write.*
+def myTestCase = context.testCase
+propTestStep = myTestCase.getTestStepByName("inputData")
+
+
+propTestStep.setPropertyValue("Total","0");
+propTestStep.setPropertyValue("Count","1");
+propTestStep.setPropertyValue("Next","0");
+propTestStep.setPropertyValue("StopVal","0");
+propTestStep.setPropertyValue("Escribir","crear");
+propTestStep.setPropertyValue("fileName","");
+</script></con:config></con:testStep><con:testStep type="groovy" name="Datos" id="e01d9ed7-6e75-414e-a06c-e565cf1033f0"><con:settings/><con:config><script>import com.eviware.soapui.support.XmlHolder
+import jxl.*
+import jxl.write.*
+
+def myTestCase = context.testCase//myTestCase
+def counter,next,previous,size//VARIABLES USED TO HANDLE THE
+//RUTA ORIGEN EXCEL
+Workbook workbook1 = Workbook.getWorkbook(new File("C:\\Users\\user\\Desktop\\Semillero periferia\\soapUI\\SoapUI-workspace\\perros.xls"));
+//HOJA ORIGEN EXCEL
+Sheet sheet1 = workbook1.getSheet(0)
+//OBTENER EL NUMERO DE LINEAS
+size= sheet1.getRows().toInteger()
+//OBTENER EL NUMERO DE COLUMNAS
+columnas = sheet1.getColumns().toInteger()
+
+rowcount=sheet1.getRows();
+colcount=sheet1.getColumns();
+
+//VACIANDO LAS VARIABLES
+//ASIGNA EL INPUT A VARIABLES
+propTestStep = myTestCase.getTestStepByName("inputData")
+propTestStepOutput = myTestCase.getTestStepByName("outputData")
+propTestStep.setPropertyValue("Total",size.toString())
+counter = propTestStep.getPropertyValue("Count").toString()
+
+//LIMPIA VALOR DE LAS VARIABLES
+propTestStep.setPropertyValue("Id","");
+propTestStep.setPropertyValue("Name","");
+propTestStep.setPropertyValue("Status","");
+
+counter = counter.toInteger()
+
+next = (counter >size-2? 1: counter+1) //set the next value
+
+//LEE CAMPOS DE EXCEL Y LOS ALAMACENA
+Cell f1=sheet1.getCell(0,counter) // getCell(Column,row) -Id
+Cell f2=sheet1.getCell(1,counter) // getCell(Column,row) -Name
+Cell f3=sheet1.getCell(2,counter) // getCell(Column,row) -Status
+Cell f4=sheet1.getCell(3,counter) // getCell(Column,row) -Fecha
+workbook1.close()//close the file
+
+//ASIGNA VALORES DE EXCEL A VARIABLES DE TRABAJO
+campo1=f1.getContents()//getCell(column,row) -Id 
+campo2=f2.getContents()//getCell(column,row) -Name
+campo3=f3.getContents()//getCell(column,row) -Status
+campo4=f4.getContents()
+//CAPTURAR FECHA DEL SISTEMA REALIZAR FORMARDATE
+def hora = new Date()
+def horaformtat = hora.format("yyyyMMddHHmm")
+def horaActivacion = hora.format("yyyy-MM-dd-HH:mm")
+
+//GENERA VALOR AL CAMPO "PROCESO" DE VARIABLES DE CONTEXTO
+//if(campo4 =="")
+//{
+//	fecha=horaformatat
+//}
+
+//AGREGA UN VALOR RAMDOM
+def randomValue = 6017800000+(int)((Math.random()*99999))
+context.testCase.testSteps["inputData"].setPropertyValue("Telefono",randomValue.toString())
+
+//ASIGNA EL VALOR DE ARCHIVOS DE INSUMO AL INPUTDATA
+propTestStep.setPropertyValue("Id",campo1);
+propTestStep.setPropertyValue("Name",campo2);
+propTestStep.setPropertyValue("Status",campo3);
+
+propTestStep.setPropertyValue("Count",next.toString()) //INCREMENTA EL VALOR DE COUNT
+
+next++ //incrementa el valor de next
+
+propTestStep.setPropertyValue("Next",next.toString()) //set Next calue on the properties step
+
+//Decide if the test has to ser run again or not
+
+if (counter == size-1)
+{
+	propTestStep.setPropertyValue("StopVal","T")
+	log.info "Setting the StopVal property now..."
+}
+
+
+
+
+
+</script></con:config></con:testStep><con:testStep type="properties" name="inputData" id="88bf4c7a-40db-43df-9a7d-f388336c77d9"><con:settings/><con:config xsi:type="con:PropertiesStep" saveFirst="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:properties><con:property><con:name>Name</con:name><con:value>salco</con:value></con:property><con:property><con:name>Status</con:name><con:value>activo</con:value></con:property><con:property><con:name>Id</con:name><con:value>2</con:value></con:property><con:property><con:name>Total</con:name><con:value>11</con:value></con:property><con:property><con:name>Count</con:name><con:value>3</con:value></con:property><con:property><con:name>Next</con:name><con:value>4</con:value></con:property><con:property><con:name>StopVal</con:name><con:value>0</con:value></con:property><con:property><con:name>Escribir</con:name><con:value>crear</con:value></con:property><con:property><con:name>fileName</con:name><con:value>TestCase 1</con:value></con:property><con:property><con:name>Telefono</con:name><con:value>6017878463</con:value></con:property></con:properties></con:config></con:testStep><con:testStep type="properties" name="outputData" id="91f4856c-1bbf-47a8-8f77-f9bf6d447660"><con:settings/><con:config xsi:type="con:PropertiesStep" saveFirst="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:properties><con:property><con:name>Name</con:name><con:value>Omar</con:value></con:property></con:properties></con:config></con:testStep><con:testStep type="restrequest" name="Pet 1 - Request 1" id="5e2b2c63-7913-4f4f-9387-f3a1e1098a64"><con:settings/><con:config service="https://petstore.swagger.io" resourcePath="/v2/pet" methodName="Pet 1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Pet 1 - Request 1" id="5a45df9d-fc69-4240-a321-281c27cf3e13" mediaType="application/xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://petstore.swagger.io</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<Pet>
+    <id>${inputData#Id}</id>
+    <Category>
+        <id>2</id>
+        <name>gato</name>
+    </Category>
+    <name>${inputData#Name}</name>
+    <photoUrls>
+        <photoUrl>fotogato</photoUrl>
+    </photoUrls>
+    <tags>
+        <Tag>
+            <id>1</id>
+            <name>tagsss</name>
+        </Tag>
+    </tags>
+    <status>${inputData#Status}</status>
+</Pet>]]></con:request><con:originalUri>https://petstore.swagger.io/v2/pet</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Escribir" id="f8cbd42d-afd4-4da2-9ffe-0c6c18915cfa"><con:settings/><con:config><script>//Definig a file handler/pointer to handle the file.
+def myTestCase = context.testCase //
+def counter,total,band_nfile
+def resultado
+def nomServicio= "${context.testCase.name}"
+propTestStepOutput = myTestCase.getTestStepByName("outputData")
+propTestStep = myTestCase.getTestStepByName("inputData")
+
+band_nfile =   propTestStep.getPropertyValue("Escribir").toString()
+def fileName = propTestStep.getPropertyValue("fileName").toString()
+
+if(band_nfile == "crear")
+{
+	def fecha = new Date()
+	def fecha2 = fecha.format("yyyy-MM-dd HH-mm-ss")
+	fileName = "Automatizacion" + fileName + "_" +fecha2+".txt"
+	propTestStep.setPropertyValue("fileName", fileName);
+	propTestStep.setPropertyValue("Escribir", "noCrear");
+}
+
+def inputFile = new File("C:\\Users\\user\\Desktop\\Semillero periferia\\soapUI\\SoapUI-workspace\\outputData\\"+fileName)
+counter = propTestStep.getPropertyValue("Count").toString()
+total = propTestStep.getPropertyValue("Total").toString()
+StopVal1 = propTestStep.getPropertyValue("StopVal").toString()
+String str= "2"
+
+//VALIDACION PRUEBA
+if((propTestStepOutput.getPropertyValue("Id").toString() != "")
+	&amp;&amp;(propTestStepOutput.getPropertyValue("Name").toString() != "")
+	&amp;&amp;(propTestStepOutput.getPropertyValue("Status").toString() != ""))
+{
+	resultado = "Exitoso"
+}
+else
+{
+	resultado = "Fallido"
+}
+
+log.info(resultado)
+
+if(StopVal1 != "T")
+{
+	inputFile.append("Id" + "|"+ propTestStep.getPropertyValue("Id").toString()+","
+	+"Name"+ "|"+ propTestStep.getPropertyValue("Name").toString()+","
+	+"Status"+ "|"+ propTestStep.getPropertyValue("Status").toString()+","
+	+ "resultadoPrueba"+"|" + resultado
+	+"\n"
+	)
+}
+else
+{
+	inputFile.append("Id"+"|"+ propTestStep.getPropertyValue("Id").toString()+","
+	+"Name"+ "|"+ propTestStep.getPropertyValue("Name").toString()+","
+	+"Status"+ "|"+ propTestStep.getPropertyValue("Status").toString()+","
+	+ "resultadoPrueba"+"|" + resultado
+	+"\n"
+	)
+}
+if(StopVal1 == "T")
+{
+	log.info("Process Terminated")
+	propTestStep.setPropertyValue("Total","0");
+	propTestStep.setPropertyValue("Count","1");
+	propTestStep.setPropertyValue("Next","0");
+	propTestStep.setPropertyValue("StopVal","0");
+	propTestStep.setPropertyValue("Escribir","crear");
+	propTestStep.setPropertyValue("fileName",nomServicio);
+}
+else
+{
+	testRunner.gotoStepByName("Datos")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
